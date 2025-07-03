@@ -194,7 +194,7 @@ void inserir(BPlusTree_t *arvore, registro_t *registro) {
     }
 }
 
-//função para buscar um registro na árvore B+
+// Função para buscar um registro na árvore B+ (apenas em nós folhas)
 registro_t *buscar(BPlusTree_t *arvore, unsigned long long chave) {
     if (!arvore || !arvore->raiz) {
         return NULL; // Árvore vazia
@@ -202,25 +202,26 @@ registro_t *buscar(BPlusTree_t *arvore, unsigned long long chave) {
 
     nodo_t *atual = arvore->raiz;
 
-    while (atual != NULL) {
+    // Desce até o nó folha
+    while (!atual->folha) {
         int i = 0;
 
-        // Encontra a posição correta no nó atual
+        // Encontra a posição correta para descer
         while (i < atual->numChaves && atual->chaves[i] < chave) {
             i++;
         }
 
-        // Verifica se a chave foi encontrada no nó atual
-        if (i < atual->numChaves && atual->chaves[i] == chave) {
-            return atual->registros[i]; // Retorna o registro correspondente
-        }
+        atual = atual->filhos[i];
+    }
 
-        // Se não for folha, desce para o próximo nó
-        if (!atual->folha) {
-            atual = atual->filhos[i];
-        } else {
-            break; // Se for folha e não encontrou, a chave não existe
-        }
+    // Procura a chave no nó folha
+    int i = 0;
+    while (i < atual->numChaves && atual->chaves[i] < chave) {
+        i++;
+    }
+
+    if (i < atual->numChaves && atual->chaves[i] == chave) {
+        return atual->registros[i]; // Retorna o registro correspondente
     }
 
     return NULL; // Chave não encontrada
