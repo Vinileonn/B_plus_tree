@@ -1,0 +1,10 @@
+abc123,Gol,2020,Branco
+123456789,Gol
+123456789,Gol,ano,Branco
+123456789,Gol,2020
+123456789,Gol,2020,Branco,Extra
+,Gol,2020,Branco
+123456789,,2020,Branco
+123456789,Gol,,Branco
+123456789,Gol,2020,
+
