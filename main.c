@@ -28,7 +28,7 @@ void carregarRegistros(const char *nomeArquivo, BPlusTree_t *arvore, int numRegi
         if (sscanf(linha, "%llu,%19[^,],%d,%19[^,]", &chave, modelo, &ano, cor) == 4) {
              registro_t *registro = criarRegistro(chave, modelo, ano, cor);
              inserir(arvore, registro);
-             if (chaves != NULL) { // Se um array de chaves for fornecido, armazena a chave
+             if (chaves != NULL) { 
                  chaves[count] = chave;
              }
              count++;
@@ -40,7 +40,7 @@ void carregarRegistros(const char *nomeArquivo, BPlusTree_t *arvore, int numRegi
 // Testa o desempenho da busca lendo chaves do arquivo 'buscas.txt'.
 // O número de buscas é fixo em 100 
 void testarDesempenhoBusca(BPlusTree_t *arvore, int totalRegistros) {
-    const int NUM_BUSCAS = 100; // Número fixo de buscas para o teste de desempenho
+    const int NUM_BUSCAS = 100; 
     unsigned long long chavesParaBuscar[NUM_BUSCAS];
 
     FILE* f_buscas = fopen("buscas.txt", "r");
@@ -65,7 +65,6 @@ void testarDesempenhoBusca(BPlusTree_t *arvore, int totalRegistros) {
 
     clock_t inicio = clock();
 
-    // Executa as buscas
     for (int i = 0; i < chavesLidas; i++) {
         buscar(arvore, chavesParaBuscar[i]);
     }
@@ -84,7 +83,6 @@ void testarDesempenhoInsercao(BPlusTree_t *arvore, const char *nomeArquivo, int 
 
     clock_t inicio = clock();
 
-    // Carrega e insere os registros
     carregarRegistros(nomeArquivo, arvore, numRegistros, NULL);
 
     clock_t fim = clock();
@@ -113,50 +111,59 @@ int main() {
 
         printf("Realizando testes para %d registros:\n", numRegistros);
 
-        // --- Teste de Desempenho de Inserção ---
+        // Teste de Desempenho de Inserção
         BPlusTree_t *arvoreInsercao = criarArvoreBPlus();
         testarDesempenhoInsercao(arvoreInsercao, nomeArquivoDados, numRegistros);
         destruirArvoreBPlus(arvoreInsercao->raiz);
         free(arvoreInsercao);
 
-        // --- Teste de Desempenho de Busca ---
+        // Teste de Desempenho de Busca 
         BPlusTree_t *arvoreBusca = criarArvoreBPlus();
-        carregarRegistros(nomeArquivoDados, arvoreBusca, numRegistros, NULL); // Carrega a mesma quantidade de registros
+        carregarRegistros(nomeArquivoDados, arvoreBusca, numRegistros, NULL);
         testarDesempenhoBusca(arvoreBusca, numRegistros);
         destruirArvoreBPlus(arvoreBusca->raiz);
-        free(arvoreBusca);
 
+        int altura = alturaArvoreBPlus(arvoreBusca->raiz);
+        printf("Altura da Árvore B+ com %d REGISTROS = %d\n", numRegistros, altura);
+
+        free(arvoreBusca);
         printf("-----------------------------------------------------------------------------------------------------------\n");
     }
 
     // --- Seção de Visualização ---
 
-    printf("--- Impressão e Visualização (ORDEM=%d, %d registros) ---\n\n", ORDEM, REGISTROS);
+    printf("--- Visualização (ORDEM=%d, %d registros) ---\n", ORDEM, REGISTROS);
     BPlusTree_t *arvoreExemplo = criarArvoreBPlus();
     carregarRegistros(nomeArquivoDados, arvoreExemplo, REGISTROS, NULL);
 
     /*
-    // 1. Imprime a árvore no console 
-    printf("\n[Impressão no Terminal via Fila]\n");
-    imprimeArvorePorNiveis(arvoreExemplo->raiz); // Descomente se quiser a impressão no console
+    // Descomente se quiser a impressão no console da arvore teste completa
+
+    // Imprime a árvore no console 
+    printf("\nImpressão no Terminal via Fila\n");
+
+    int altura = alturaArvoreBPlus(arvoreExemplo->raiz);
+    printf("Altura da Árvore B+ com %d REGISTROS = %d\n", REGISTROS, altura);
+
+    imprimeArvorePorNiveis(arvoreExemplo->raiz); 
     */
 
-    // 2. Gera o arquivo .dot para a imagem
+    // Gera o arquivo .dot para a imagem
     char nomeArquivoDot[100];
     char nomeArquivoPng[100];
 
-    // O nome do arquivo agora também inclui a ordem e os registros, usando REGISTROS passados
     sprintf(nomeArquivoDot, "arvore_ordem_%d_regs_%d.dot", ORDEM, REGISTROS);
     sprintf(nomeArquivoPng, "saida_ordem_%d_regs_%d.png", ORDEM, REGISTROS);
 
     gerarDot(arvoreExemplo, nomeArquivoDot); 
 
-    // --- Chamada ao sistema para gerar o PNG  ---
+    // Chamada ao sistema para gerar o PNG
     char command_buffer[256];
     sprintf(command_buffer, "dot -Tpng %s -o %s", nomeArquivoDot, nomeArquivoPng);
     int sys_result = system(command_buffer); 
     if (sys_result == 0) {
         printf("\nImagem '%s' criada com sucesso!\n", nomeArquivoPng);
+        printf("Verifique na pasta para visualização da árvore completa em formato .png.\n");
     } 
     else {
         fprintf(stderr, "ERRO: Falha ao gerar a imagem PNG. Verifique se o Graphviz está instalado e no PATH.\n");

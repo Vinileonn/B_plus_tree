@@ -1,3 +1,11 @@
+## ✒️ Autores
+
+* Elen Pasqualli Gesser - elengesser@ufpr.br
+
+* Laisa Marcelino Santos Rodrigues - laisamarcelino@ufpr.br
+
+* Vinicius Leon Paula - vinicius.leon@ufpr.br
+
 # Análise de Desempenho de Árvore B+: O Impacto do Dimensionamento de Nós
 
 Este projeto implementa uma **Árvore B+** em linguagem C e realiza uma análise de desempenho focada no impacto do dimensionamento dos nós (definido pela `ORDEM` da árvore) na eficiência das operações de busca e inserção.
@@ -80,11 +88,3 @@ Após a execução, um arquivo .dot (ex: arvore_ordem_3_regs_20.dot) e uma image
 * **arvore_ordem_X_regs_Y.dot**: Arquivo gerado pelo programa para visualização com Graphviz.
 
 * **saida_ordem_X_regs_Y.png**: Imagem da árvore gerada a partir do arquivo .dot.
-
-## ✒️ Autores
-
-* Elen Pasqualli Gesser - elengesser@ufpr.br
-
-* Laisa Marcelino Santos Rodrigues - laisamarcelino@ufpr.br
-
-* Vinicius Leon Paula - vinicius.leon@ufpr.br

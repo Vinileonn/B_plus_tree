@@ -4,15 +4,15 @@
 #include "BPlusTree.h"
 #include "fila.h" 
 
-// --- Estruturas Auxiliares  ---
+// Estruturas Auxiliares
 typedef struct {
     unsigned long long chave;
     nodo_t *novoNodo;
-    int ocorreuSplit; // 0 = não, 1 = sim
+    int ocorreuSplit;
 } SplitResult;
 
 
-// --- Protótipos de Funções Estáticas/Auxiliares  ---
+// Protótipos de Funções Estáticas/Auxiliares
 static int _obterIndiceChave(nodo_t *nodo, unsigned long long chave);
 static void _inserirRegistroEmFolha(nodo_t *folha, unsigned long long chave, registro_t *registro);
 static nodo_t *_buscarFolha(nodo_t *raiz, unsigned long long chave);
@@ -24,7 +24,7 @@ void gerarDotConteudoHTML(nodo_t *nodo, FILE *f); // Usado por gerarDot
 
 
 // ====================================================================================
-// --- Funções de Manipulação de Registro ---
+// Funções de Manipulação de Registro
 // ====================================================================================
 
 registro_t *criarRegistro(unsigned long long chave, const char *modelo, int ano, const char *cor) {
@@ -49,7 +49,7 @@ void destruirRegistro(registro_t *registro) {
 }
 
 // ====================================================================================
-// --- Funções de Manipulação de Nó ---
+// Funções de Manipulação de Nó
 // ====================================================================================
 
 nodo_t *criarNodo(int folha) {
@@ -84,7 +84,7 @@ void destruirNodo(nodo_t *nodo) {
 }
 
 // ====================================================================================
-// --- Funções de Manipulação da Árvore B+ (Estrutura Principal) ---
+// Funções de Manipulação da Árvore B+ (Estrutura Principal)
 // ====================================================================================
 
 BPlusTree_t *criarArvoreBPlus() {
@@ -112,7 +112,7 @@ void destruirArvoreBPlus(nodo_t *raiz) {
 
 
 // ====================================================================================
-// --- Funções Auxiliares de Busca ---
+// Funções Auxiliares de Busca
 // ====================================================================================
 
 // Retorna o índice onde a chave deveria ser inserida (para manter a ordem)
@@ -159,7 +159,7 @@ registro_t *buscar(BPlusTree_t *arvore, unsigned long long chave) {
 
 
 // ====================================================================================
-// --- Funções Auxiliares de Inserção ---
+// Funções Auxiliares de Inserção
 // ====================================================================================
 
 // Insere um registro em um nó folha que tem espaço
@@ -326,7 +326,7 @@ static SplitResult _inserirRecursivo(nodo_t *current_node, registro_t *registro,
 
 
 // ====================================================================================
-// --- Função Principal de Inserção ---
+// Função Principal de Inserção
 // ====================================================================================
 
 void inserir(BPlusTree_t *arvore, registro_t *registro) {
@@ -367,7 +367,7 @@ void inserir(BPlusTree_t *arvore, registro_t *registro) {
 
 
 // ====================================================================================
-// --- Funções de Impressão e Visualização (DOT) ---
+// Funções de Impressão e Visualização (DOT)
 // ====================================================================================
 
 // Helper para imprimir o conteúdo de um nó
@@ -496,7 +496,7 @@ void gerarDot(BPlusTree_t *arvore, const char* nomeArquivo) {
 
     fprintf(f, "}\n");
     fclose(f);
-    printf("Arquivo de visualização '%s' gerado com sucesso (usando HTML-like).\n", nomeArquivo);
+    //printf("Arquivo de visualização '%s' gerado com sucesso (usando HTML-like).\n", nomeArquivo);
 }
 
 // Achar altura da árvore B+
