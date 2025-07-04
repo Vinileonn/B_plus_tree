@@ -129,7 +129,42 @@ int main() {
         printf("-----------------------------------------------------------------------------------------------------------\n");
     }
 
-    printf("--- Testes de Desempenho Finalizados ---\n\n");
+    // --- Seção de Visualização ---
+
+    printf("--- Impressão e Visualização (ORDEM=%d, %d registros) ---\n\n", ORDEM, REGISTROS);
+    BPlusTree_t *arvoreExemplo = criarArvoreBPlus();
+    carregarRegistros(nomeArquivoDados, arvoreExemplo, REGISTROS, NULL);
+
+    /*
+    // 1. Imprime a árvore no console 
+    printf("\n[Impressão no Terminal via Fila]\n");
+    imprimeArvorePorNiveis(arvoreExemplo->raiz); // Descomente se quiser a impressão no console
+    */
+
+    // 2. Gera o arquivo .dot para a imagem
+    char nomeArquivoDot[100];
+    char nomeArquivoPng[100];
+
+    // O nome do arquivo agora também inclui a ordem e os registros, usando REGISTROS passados
+    sprintf(nomeArquivoDot, "arvore_ordem_%d_regs_%d.dot", ORDEM, REGISTROS);
+    sprintf(nomeArquivoPng, "saida_ordem_%d_regs_%d.png", ORDEM, REGISTROS);
+
+    gerarDot(arvoreExemplo, nomeArquivoDot); 
+
+    // --- Chamada ao sistema para gerar o PNG  ---
+    char command_buffer[256];
+    sprintf(command_buffer, "dot -Tpng %s -o %s", nomeArquivoDot, nomeArquivoPng);
+    int sys_result = system(command_buffer); 
+    if (sys_result == 0) {
+        printf("\nImagem '%s' criada com sucesso!\n", nomeArquivoPng);
+    } 
+    else {
+        fprintf(stderr, "ERRO: Falha ao gerar a imagem PNG. Verifique se o Graphviz está instalado e no PATH.\n");
+    }
+
+    destruirArvoreBPlus(arvoreExemplo->raiz);
+    free(arvoreExemplo);
+
 
     return 0;
 }

@@ -23,4 +23,6 @@ all:
 
 # Regra para limpar os arquivos gerados
 clean:
-	rm -f $(EXEC)
+	rm -f $(EXEC) *.dot *.png
+
+.PHONY: all clean
