@@ -123,7 +123,7 @@ int main() {
         testarDesempenhoBusca(arvoreBusca, numRegistros);
 
         int altura = alturaArvoreBPlus(arvoreBusca->raiz);
-        printf("\nAltura da Árvore B+ com REGISTRO %d = %d\n\n", numRegistros, altura);
+        printf("Altura da Árvore B+ com REGISTRO %d = %d\n", numRegistros, altura);
 
         destruirArvoreBPlus(arvoreBusca->raiz);
         free(arvoreBusca);
@@ -133,7 +133,7 @@ int main() {
 
     // Seção de Visualização
 
-    printf("--- Impressão e Visualização (ORDEM=%d, %d registros) ---\n\n", ORDEM, REGISTROS);
+    printf("--- Visualização (ORDEM=%d, %d registros) ---\n", ORDEM, REGISTROS);
     BPlusTree_t *arvoreExemplo = criarArvoreBPlus();
     carregarRegistros(nomeArquivoDados, arvoreExemplo, REGISTROS, NULL);
 
@@ -164,6 +164,7 @@ int main() {
     int sys_result = system(command_buffer); 
     if (sys_result == 0) {
         printf("\nImagem '%s' criada com sucesso!\n", nomeArquivoPng);
+        printf("Verifique na pasta para visualização da árvore completa em formato .png.\n");
     } 
     else {
         fprintf(stderr, "ERRO: Falha ao gerar a imagem PNG. Verifique se o Graphviz está instalado e no PATH.\n");
