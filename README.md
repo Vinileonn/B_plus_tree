@@ -41,9 +41,14 @@ O projeto utiliza um `Makefile` para facilitar a compilação. Você pode defini
 Para compilar, navegue até o diretório raiz do projeto e execute:
 
 ```bash
-make ORDEM=5 REGISTROS=100
+python3 gerar_dados.py
+python3 gerar_testes_buscas.py
+make ORDEM=X REGISTROS=Y
 ./ArvoreBPlus
 ```
+
+O primeiro e o segundo comando geram os dados a serem testados.
+O terceiro comando compila o arquivo da árvore B+. Em `X` e `Y` indique valores inteiros para a ORDEM e a quantidade de registros da Árvore.
 
 O programa executará automaticamente os testes de desempenho para diferentes volumes de registros (100, 1.000, 100.000) e gerará um arquivo .dot e uma imagem .png da árvore para a configuração de ORDEM e REGISTROS definida no Makefile (ou os valores padrão, se não especificados).
 
