@@ -1,20 +1,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
+#include <time.h> 
 #include "BPlusTree.h"
-#include "fila.h" 
+#include "fila.h"
 
-// Constantes Globais
 #define MAX_LINHA 256
-#define MAX_REGISTROS 10000
 
-// Carrega registros de um arquivo para a árvore, validando cada linha.
+// Carrega registros de um arquivo para a árvore.
 void carregarRegistros(const char *nomeArquivo, BPlusTree_t *arvore, int numRegistros, unsigned long long *chaves) {
     FILE *arquivo = fopen(nomeArquivo, "r");
     if (!arquivo) {
-        perror("Erro ao abrir o arquivo");
-        exit(1);
+        perror("Erro ao abrir o arquivo para carregar registros");
+        exit(EXIT_FAILURE);
     }
 
     char linha[MAX_LINHA];
@@ -24,32 +22,25 @@ void carregarRegistros(const char *nomeArquivo, BPlusTree_t *arvore, int numRegi
         int ano;
         char modelo[TAM_MODELO] = {0};
         char cor[TAM_COR] = {0};
-        int campos_lidos = 0;
-        char char_extra;
 
         linha[strcspn(linha, "\n")] = 0;
 
-        campos_lidos = sscanf(linha, "%llu,%19[^,],%d,%19[^,]%c", &chave, modelo, &ano, cor, &char_extra);
-
-        if (campos_lidos == 4) {
+        if (sscanf(linha, "%llu,%19[^,],%d,%19[^,]", &chave, modelo, &ano, cor) == 4) {
              registro_t *registro = criarRegistro(chave, modelo, ano, cor);
              inserir(arvore, registro);
-             if (chaves != NULL) {
+             if (chaves != NULL) { // Se um array de chaves for fornecido, armazena a chave
                  chaves[count] = chave;
              }
              count++;
-        } else {
-            if (strlen(linha) > 0) {
-                 fprintf(stderr, "AVISO: Linha malformada ignorada -> \"%s\"\n", linha);
-            }
         }
     }
     fclose(arquivo);
 }
 
-// Testa o desempenho da busca lendo 100 chaves do arquivo 'buscas.txt'.
-void testarDesempenho(BPlusTree_t *arvore, int totalRegistros) {
-    const int NUM_BUSCAS = 100;
+// Testa o desempenho da busca lendo chaves do arquivo 'buscas.txt'.
+// O número de buscas é fixo em 100 
+void testarDesempenhoBusca(BPlusTree_t *arvore, int totalRegistros) {
+    const int NUM_BUSCAS = 100; // Número fixo de buscas para o teste de desempenho
     unsigned long long chavesParaBuscar[NUM_BUSCAS];
 
     FILE* f_buscas = fopen("buscas.txt", "r");
@@ -68,12 +59,13 @@ void testarDesempenho(BPlusTree_t *arvore, int totalRegistros) {
     fclose(f_buscas);
 
     if (chavesLidas == 0) {
-        fprintf(stderr, "AVISO: Nenhuma chave lida de 'buscas.txt'. Teste de desempenho cancelado.\n");
+        fprintf(stderr, "AVISO: Nenhuma chave lida de 'buscas.txt'. Teste de desempenho de busca cancelado.\n");
         return;
     }
-    
+
     clock_t inicio = clock();
 
+    // Executa as buscas
     for (int i = 0; i < chavesLidas; i++) {
         buscar(arvore, chavesParaBuscar[i]);
     }
@@ -83,60 +75,61 @@ void testarDesempenho(BPlusTree_t *arvore, int totalRegistros) {
     double tempoTotal = ((double)(fim - inicio)) / CLOCKS_PER_SEC;
     double tempoMedio = tempoTotal / chavesLidas;
 
-    printf("ORDEM: %-3d | Registros: %-5d | Tempo médio de busca: %.10f segundos (usando buscas.txt)\n",
-           ORDEM, totalRegistros, tempoMedio);
+    printf("ORDEM: %-3d | Registros Inseridos: %-6d | Tempo Total Busca (%d chaves): %.6f segundos | Tempo Médio por Busca: %.10f segundos\n",
+           ORDEM, totalRegistros, chavesLidas, tempoTotal, tempoMedio);
 }
 
+// Testa o desempenho da inserção de registros.
+void testarDesempenhoInsercao(BPlusTree_t *arvore, const char *nomeArquivo, int numRegistros) {
+
+    clock_t inicio = clock();
+
+    // Carrega e insere os registros
+    carregarRegistros(nomeArquivo, arvore, numRegistros, NULL);
+
+    clock_t fim = clock();
+
+    double tempoTotal = ((double)(fim - inicio)) / CLOCKS_PER_SEC;
+    double tempoMedio = tempoTotal / numRegistros;
+
+    printf("ORDEM: %-3d | Registros Inseridos: %-6d | Tempo Total Inserção: %.6f segundos | Tempo Médio por Inserção: %.10f segundos\n",
+           ORDEM, numRegistros, tempoTotal, tempoMedio);
+}
+
+
 int main() {
-    //const char *nomeArquivo = "registros_invalidos.txt";
-    const char *nomeArquivo = "registros_carros.txt";
-    int tamanhosTeste[] = {100, 1000, 10000};
+    const char *nomeArquivoDados = "registros_carros.txt";
+    int tamanhosTeste[] = {100, 1000, 100000};
     int numTamanhos = sizeof(tamanhosTeste) / sizeof(int);
 
     srand(time(NULL));
 
-    printf("--- Iniciando Teste de Desempenho da Árvore B+ ---\n");
+    printf("--- Iniciando Testes de Desempenho da Árvore B+ ---\n");
+    printf("Configuração (ORDEM definida via Makefile/compilação)\n");
+    printf("-----------------------------------------------------------------------------------------------------------\n");
 
     for (int i = 0; i < numTamanhos; i++) {
         int numRegistros = tamanhosTeste[i];
-        BPlusTree_t *arvore = criarArvoreBPlus();
-        
-        carregarRegistros(nomeArquivo, arvore, numRegistros, NULL);
-        
-        testarDesempenho(arvore, numRegistros);
 
-        destruirArvoreBPlus(arvore->raiz);
-        free(arvore);
+        printf("Realizando testes para %d registros:\n", numRegistros);
+
+        // --- Teste de Desempenho de Inserção ---
+        BPlusTree_t *arvoreInsercao = criarArvoreBPlus();
+        testarDesempenhoInsercao(arvoreInsercao, nomeArquivoDados, numRegistros);
+        destruirArvoreBPlus(arvoreInsercao->raiz);
+        free(arvoreInsercao);
+
+        // --- Teste de Desempenho de Busca ---
+        BPlusTree_t *arvoreBusca = criarArvoreBPlus();
+        carregarRegistros(nomeArquivoDados, arvoreBusca, numRegistros, NULL); // Carrega a mesma quantidade de registros
+        testarDesempenhoBusca(arvoreBusca, numRegistros);
+        destruirArvoreBPlus(arvoreBusca->raiz);
+        free(arvoreBusca);
+
+        printf("-----------------------------------------------------------------------------------------------------------\n");
     }
 
-    printf("--- Teste de Desempenho Finalizado ---\n\n");
-    
-    printf("--- Exemplo de Impressão e Visualização (ORDEM=%d, %d registros) ---\n", ORDEM, REGISTROS);
-    BPlusTree_t *arvoreExemplo = criarArvoreBPlus();
-    carregarRegistros(nomeArquivo, arvoreExemplo, REGISTROS, NULL); 
-    
-    // --- 1. Imprime a árvore no console ---
-    printf("\n[Impressão no Terminal via Fila]\n");
-    imprimeArvorePorNiveis(arvoreExemplo->raiz);
-
-    // --- 2. Gera o arquivo .dot para a imagem ---
-    char nomeArquivoDot[100];
-    // O nome do arquivo agora também inclui a ordem e os registros
-    sprintf(nomeArquivoDot, "arvore_ordem_%d_regs_%d.dot", ORDEM, REGISTROS);
-    
-    char nomeArquivoPng[100];
-    sprintf(nomeArquivoPng, "saida_ordem_%d_regs_%d.png", ORDEM, REGISTROS);
-    
-    printf("\n[Geração de Arquivo para Visualização Gráfica]\n");
-    gerarDot(arvoreExemplo, nomeArquivoDot);
-    
-    // Limpa a memória
-    destruirArvoreBPlus(arvoreExemplo->raiz);
-    free(arvoreExemplo);
-
-    // Imprime a instrução exata para o usuário gerar a imagem
-    printf("\nPara gerar a imagem desta árvore, execute no terminal:\n");
-    printf("dot -Tpng %s -o %s\n", nomeArquivoDot, nomeArquivoPng);
+    printf("--- Testes de Desempenho Finalizados ---\n\n");
 
     return 0;
 }

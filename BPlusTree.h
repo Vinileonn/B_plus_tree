@@ -1,9 +1,6 @@
 #ifndef BPLUSTREE_H
 #define BPLUSTREE_H
 
-//define a capacidade máxima de filhos
-
-//#define ORDEM 3 ela deve ser variável
 
 #define TAM_MODELO 20
 #define TAM_COR 20
@@ -34,7 +31,7 @@ typedef struct {
 
 registro_t *criarRegistro(unsigned long long chave, const char *modelo, int ano, const char *cor);
 void destruirRegistro(registro_t *registro); //protótipo de função para destruir um registro
-nodo_t *criarNodo(); //protótipo de função para criar um novo nó (folha ou interno)
+nodo_t *criarNodo(int folha); //protótipo de função para criar um novo nó (folha ou interno)
 void destruirNodo(nodo_t *nodo); //protótipo de função para destruir um nó
 BPlusTree_t *criarArvoreBPlus(); //protótipo de função para criar uma nova árvore B+
 void destruirArvoreBPlus(nodo_t *raiz); //protótipo de função para destruir a árvore B+
