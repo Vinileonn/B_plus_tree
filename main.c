@@ -28,7 +28,7 @@ void carregarRegistros(const char *nomeArquivo, BPlusTree_t *arvore, int numRegi
         if (sscanf(linha, "%llu,%19[^,],%d,%19[^,]", &chave, modelo, &ano, cor) == 4) {
              registro_t *registro = criarRegistro(chave, modelo, ano, cor);
              inserir(arvore, registro);
-             if (chaves != NULL) { 
+             if (chaves != NULL) {
                  chaves[count] = chave;
              }
              count++;
@@ -117,33 +117,33 @@ int main() {
         destruirArvoreBPlus(arvoreInsercao->raiz);
         free(arvoreInsercao);
 
-        // Teste de Desempenho de Busca 
+        // Teste de Desempenho de Busca
         BPlusTree_t *arvoreBusca = criarArvoreBPlus();
         carregarRegistros(nomeArquivoDados, arvoreBusca, numRegistros, NULL);
         testarDesempenhoBusca(arvoreBusca, numRegistros);
-        destruirArvoreBPlus(arvoreBusca->raiz);
 
         int altura = alturaArvoreBPlus(arvoreBusca->raiz);
-        printf("Altura da Árvore B+ com %d REGISTROS = %d\n", numRegistros, altura);
+        printf("\nAltura da Árvore B+ com REGISTRO %d = %d\n\n", numRegistros, altura);
 
+        destruirArvoreBPlus(arvoreBusca->raiz);
         free(arvoreBusca);
+
         printf("-----------------------------------------------------------------------------------------------------------\n");
     }
 
-    // --- Seção de Visualização ---
+    // Seção de Visualização
 
-    printf("--- Visualização (ORDEM=%d, %d registros) ---\n", ORDEM, REGISTROS);
+    printf("--- Impressão e Visualização (ORDEM=%d, %d registros) ---\n\n", ORDEM, REGISTROS);
     BPlusTree_t *arvoreExemplo = criarArvoreBPlus();
     carregarRegistros(nomeArquivoDados, arvoreExemplo, REGISTROS, NULL);
 
     /*
-    // Descomente se quiser a impressão no console da arvore teste completa
-
+    // Descomente se quiser a impressão no console
     // Imprime a árvore no console 
-    printf("\nImpressão no Terminal via Fila\n");
+    printf("\n[Impressão no Terminal via Fila]\n");
 
     int altura = alturaArvoreBPlus(arvoreExemplo->raiz);
-    printf("Altura da Árvore B+ com %d REGISTROS = %d\n", REGISTROS, altura);
+    printf("\nAltura da Árvore B+ com REGISTRO %d = %d\n\n", REGISTROS, altura);
 
     imprimeArvorePorNiveis(arvoreExemplo->raiz); 
     */
@@ -152,6 +152,7 @@ int main() {
     char nomeArquivoDot[100];
     char nomeArquivoPng[100];
 
+    // O nome do arquivo agora também inclui a ordem e os registros, usando REGISTROS passados
     sprintf(nomeArquivoDot, "arvore_ordem_%d_regs_%d.dot", ORDEM, REGISTROS);
     sprintf(nomeArquivoPng, "saida_ordem_%d_regs_%d.png", ORDEM, REGISTROS);
 
@@ -163,7 +164,6 @@ int main() {
     int sys_result = system(command_buffer); 
     if (sys_result == 0) {
         printf("\nImagem '%s' criada com sucesso!\n", nomeArquivoPng);
-        printf("Verifique na pasta para visualização da árvore completa em formato .png.\n");
     } 
     else {
         fprintf(stderr, "ERRO: Falha ao gerar a imagem PNG. Verifique se o Graphviz está instalado e no PATH.\n");

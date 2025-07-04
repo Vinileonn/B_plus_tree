@@ -38,10 +38,8 @@ void destruirArvoreBPlus(nodo_t *raiz); //protótipo de função para destruir a
 void inserir(BPlusTree_t *arvore, registro_t *registro); //protótipo de função para inserir um registro na árvore B+
 registro_t *buscar(BPlusTree_t *arvore, unsigned long long chave); //protótipo de função para buscar um registro na árvore B+
 void imprimeArvore(nodo_t *nodo); //protótipo de função para imprimir a árvore B+ (para depuração).
-
+int alturaArvoreBPlus(nodo_t *raiz);
 
 void gerarDot(BPlusTree_t *arvore, const char* nomeArquivo);
-
-int alturaArvoreBPlus(nodo_t *raiz);
 
 #endif //BPlusTree.h
