@@ -115,13 +115,14 @@ int main() {
     BPlusTree_t *arvoreExemplo = criarArvoreBPlus();
     carregarRegistros(nomeArquivo, arvoreExemplo, REGISTROS, NULL); 
     
-    // --- 1. Imprime a árvore no console ---
-    printf("\n[Impressão no Terminal via Fila]\n");
-    imprimeArvorePorNiveis(arvoreExemplo->raiz);
 
-    // --- 2. Gera o arquivo .dot para a imagem ---
+    printf("\n[Impressão no Terminal via Fila]\n");
+    int altura = alturaArvoreBPlus(arvoreExemplo->raiz);
+    printf("\nAltura da Árvore B+ = %d\n\n", altura);
+
+    imprimeArvorePorNiveis(arvoreExemplo->raiz);
     char nomeArquivoDot[100];
-    // O nome do arquivo agora também inclui a ordem e os registros
+
     sprintf(nomeArquivoDot, "arvore_ordem_%d_regs_%d.dot", ORDEM, REGISTROS);
     
     char nomeArquivoPng[100];
@@ -130,11 +131,9 @@ int main() {
     printf("\n[Geração de Arquivo para Visualização Gráfica]\n");
     gerarDot(arvoreExemplo, nomeArquivoDot);
     
-    // Limpa a memória
     destruirArvoreBPlus(arvoreExemplo->raiz);
     free(arvoreExemplo);
 
-    // Imprime a instrução exata para o usuário gerar a imagem
     printf("\nPara gerar a imagem desta árvore, execute no terminal:\n");
     printf("dot -Tpng %s -o %s\n", nomeArquivoDot, nomeArquivoPng);
 

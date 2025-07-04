@@ -42,4 +42,6 @@ void imprimeArvore(nodo_t *nodo); //protótipo de função para imprimir a árvo
 
 void gerarDot(BPlusTree_t *arvore, const char* nomeArquivo);
 
+int alturaArvoreBPlus(nodo_t *raiz);
+
 #endif //BPlusTree.h

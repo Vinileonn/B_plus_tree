@@ -498,3 +498,17 @@ void gerarDot(BPlusTree_t *arvore, const char* nomeArquivo) {
     fclose(f);
     printf("Arquivo de visualização '%s' gerado com sucesso (usando HTML-like).\n", nomeArquivo);
 }
+
+// Achar altura da árvore B+
+int alturaArvoreBPlus(nodo_t *raiz) {
+    if (raiz == NULL) {
+        return 0;
+    }
+    int altura = 1;
+    nodo_t *atual = raiz;
+    while (!atual->folha) {
+        altura++;
+        atual = atual->filhos[0];
+    }
+    return altura;
+}
